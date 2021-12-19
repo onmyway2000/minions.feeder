@@ -3,6 +3,8 @@ FROM continuumio/anaconda3:2020.07
 RUN apt-get update
 RUN apt-get install -y gcc
 RUN apt-get install -y g++
+RUN apt-get install -y libfontconfig
+
 
 ADD Requirements.txt /opt/minions/
 RUN pip install --upgrade pip
