@@ -1,0 +1,13 @@
+.idea
+.ipynb_checkpoints
+*.bak
+/logs
+/cache
+/repository
+__pycache__
+tk.csv
+JupyterNotebook.lnk
+tmp.png
+/data
+/target
+*.log
