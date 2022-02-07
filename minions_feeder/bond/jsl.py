@@ -64,8 +64,9 @@ class JSLConvertibleBondLoader:
         cookie_string = self.__get_cookie_string(driver)
         df = ak.bond_cov_jsl(cookie=cookie_string)
         if len(df) > 100:
-            df['datetime'] = datetime.now()
+            df.insert(0, column="datetime", value=datetime.now())
             df.to_csv(self.__data_file)
+            self.__context.log_data_frame("jsl_bond_df", df, with_datetime=False)
         else:
             raise Exception("Failed to load fully bond info from jsl")
 

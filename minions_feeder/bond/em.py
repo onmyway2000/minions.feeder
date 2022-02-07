@@ -57,7 +57,8 @@ class EMConvertibleBondLoader:
         df.rename(columns={'债券代码': 'bond_id', '债券简称': 'bond_nm', '正股代码': 'stock_id', '正股简称': 'stock_nm',
                            '转股价': 'convert_price', '上市时间': 'time_to_market', '债现价': 'price', '正股价': 'sprice',
                            '转股价值': 'convert_value', '转股溢价率': 'premium_rt'}, inplace=True)
-        df['datetime'] = datetime.now()
+        df.insert(0, column="datetime", value=datetime.now())
         df.to_csv(self.__data_file)
+        self.__context.log_data_frame("em_bond_df", df, with_datetime=False)
         self.__logger.info("Successfully load bond from east money")
         return df
