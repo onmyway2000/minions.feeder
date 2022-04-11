@@ -1,4 +1,4 @@
 thriftpy2
 akshare==1.0.37
 schedule
-selenium
+pandas

@@ -8,12 +8,12 @@ from minions_feeder.service import FeederService
 class TestFeederService(unittest.TestCase):
     def test(self):
         thrift = FeederService().thrift
-        client = thrift.make_client(host="localhost", timeout=1 * 60 * 1000)
+        client = thrift.make_client(host="192.168.1.160", timeout=1 * 60 * 1000)
 
         self.__execute(thrift, client, "load jsl")
         self.__execute(thrift, client, "load em")
-        self.__execute(thrift, client, "get jsl")
-        self.__execute(thrift, client, "get em")
+        # self.__execute(thrift, client, "get jsl")
+        # self.__execute(thrift, client, "get em")
         client.close()
 
     def __execute(self, thrift, client, command):

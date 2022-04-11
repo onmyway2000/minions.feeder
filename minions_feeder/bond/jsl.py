@@ -1,11 +1,14 @@
 import os
+import platform
 import time
+
 import pandas as pd
-import akshare as ak
 from datetime import datetime
 
 from minions_common.common.context import Context
 from selenium import webdriver
+
+from minions_feeder.bond.jsl_fix import bond_cov_jsl
 
 
 class JSLConvertibleBondLoader:
@@ -40,38 +43,52 @@ class JSLConvertibleBondLoader:
     def load_bonds_from_jsl(self):
         self.__logger.info("Start load bond from jsl")
 
-        # options = webdriver.ChromeOptions()
-        # options.add_argument('headless')
-        # driver = webdriver.Chrome(chrome_options=options)
-        # driver = webdriver.Chrome()
-        driver = webdriver.PhantomJS()
-        driver.get('https://www.jisilu.cn/account/login/')
-        time.sleep(2)
-        user_name_control = driver.find_element_by_id("aw-login-user-name")
-        user_name_control.send_keys(self.__jsl_username)
-        time.sleep(0.5)
-        password_control = driver.find_element_by_id("aw-login-user-password")
-        password_control.send_keys(self.__jsl_password)
-        time.sleep(0.5)
-        agreement_check = driver.find_element_by_id("agreement_chk")
-        agreement_check.click()
-        time.sleep(0.5)
-        login_control = driver.find_element_by_id("login_submit")
-        login_control.click()
-        time.sleep(2)
-        driver.get('https://www.jisilu.cn/data/cbnew/#cb')
-        time.sleep(2)
+        options = webdriver.FirefoxOptions()
+        options.add_argument("-headless")
+        if platform.platform().startswith("Windows-10"):
+            executable_path = os.path.join(self.__context.get_resource_path(), "geckodriver.exe")
+        else:
+            executable_path = "geckodriver"
+        service_log_path = os.path.join(self.__context.get_logging_path(), "geckodriver.log")
+        driver = webdriver.Firefox(executable_path=executable_path, service_log_path=service_log_path, options=options)
+
+        # driver = webdriver.ChromiumEdge(
+        #     executable_path=os.path.join(self.__context.get_resource_path(), "msedgedriver.exe"))
+        # driver = webdriver.PhantomJS()
+        # driver = webdriver.Remote(command_executor="http://127.0.0.1:4444/wd/hub",
+        #                           desired_capabilities=DesiredCapabilities.CHROME)
+
+        self.__execute_login(driver)
         cookie_string = self.__get_cookie_string(driver)
-        df = ak.bond_cov_jsl(cookie=cookie_string)
+        driver.close()
+        time.sleep(2)
+        df = bond_cov_jsl(cookie=cookie_string)
         if len(df) > 100:
             df.insert(0, column="datetime", value=datetime.now())
             df.to_csv(self.__data_file)
             self.__context.log_data_frame("jsl_bond_df", df, with_datetime=False)
+            self.__logger.info("Successfully load bond from jsl")
         else:
-            raise Exception("Failed to load fully bond info from jsl")
-
-        self.__logger.info("Successfully load bond from jsl")
+            raise Exception("Failed to load fully bond info from jsl,not fully loaded")
         return df
+
+    def __execute_login(self, driver):
+        driver.implicitly_wait(2)
+        driver.get('https://www.jisilu.cn/account/login/')
+        user_name_control = \
+            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[2]/input")[0]
+        user_name_control.send_keys(self.__jsl_username)
+        password_control = \
+            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[3]/input")[0]
+        password_control.send_keys(self.__jsl_password)
+        agreement_check = \
+            driver.find_elements_by_xpath(
+                "/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[5]/div/input")[0]
+        agreement_check.click()
+        login_control = \
+            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[6]/a")[0]
+        login_control.click()
+        driver.get("https://www.jisilu.cn/web/data/cb/list")
 
     def __get_cookie_string(self, driver):
         cookie_list = driver.get_cookies()
