@@ -81,9 +81,13 @@ class JSLConvertibleBondLoader:
         password_control = \
             driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[3]/input")[0]
         password_control.send_keys(self.__jsl_password)
+        remember_check = \
+            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[5]/div[1]/input")[
+                0]
+        remember_check.click()
         agreement_check = \
-            driver.find_elements_by_xpath(
-                "/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[5]/div/input")[0]
+            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[5]/div[2]/input")[
+                0]
         agreement_check.click()
         login_control = \
             driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[6]/a")[0]
