@@ -76,21 +76,19 @@ class JSLConvertibleBondLoader:
         driver.implicitly_wait(2)
         driver.get('https://www.jisilu.cn/account/login/')
         user_name_control = \
-            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[2]/input")[0]
+            driver.find_elements_by_xpath("/html/body/div[3]/div/div/div[1]/div[1]/div[3]/form/div[2]/input")[0]
         user_name_control.send_keys(self.__jsl_username)
         password_control = \
-            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[3]/input")[0]
+            driver.find_elements_by_xpath("/html/body/div[3]/div/div/div[1]/div[1]/div[3]/form/div[3]/input")[0]
         password_control.send_keys(self.__jsl_password)
         remember_check = \
-            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[5]/div[1]/input")[
-                0]
+            driver.find_elements_by_xpath("/html/body/div[3]/div/div/div[1]/div[1]/div[3]/form/div[5]/div[1]/input")[0]
         remember_check.click()
         agreement_check = \
-            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[5]/div[2]/input")[
-                0]
+            driver.find_elements_by_xpath("/html/body/div[3]/div/div/div[1]/div[1]/div[3]/form/div[5]/div[2]/input")[0]
         agreement_check.click()
         login_control = \
-            driver.find_elements_by_xpath("/html/body/div[3]/div[2]/div/div[1]/div[1]/div[3]/form/div[6]/a")[0]
+            driver.find_elements_by_xpath("/html/body/div[3]/div/div/div[1]/div[1]/div[3]/form/div[6]/a")[0]
         login_control.click()
         driver.get("https://www.jisilu.cn/web/data/cb/list")
 
